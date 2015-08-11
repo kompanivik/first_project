@@ -9,29 +9,36 @@ using Newtonsoft.Json;
 
 namespace Communication
 {
-    class APIComm
+    public class APIComm
     {
         const int POST = 0;
         const int GET = 1;
         const int PUT = 2;
         const int DELETE = 3;
 
-        readonly HttpClient hClient = new HttpClient();
+        readonly HttpClient hClient;
 
         const string BASEADDRESS = "http://uniskill.cloudapp.net/taskservice/";
         const string ACCESSTOKEN = "8c244db574105683730a2673e77aed67";
 
-        APIComm()
+        public APIComm()
         {
+            hClient = new HttpClient();
             hClient.BaseAddress = new Uri(BASEADDRESS);
             hClient.DefaultRequestHeaders.Add("X-Uni-Secret", ACCESSTOKEN);
-            Request req = new Request();
+            Logger.log("APIComm has been constructed");
+            
+        }
+        public async void test()
+        {
+            UniRequest req = new UniRequest();
             Task task = new Task();
             task.completed = false;
             task.description = "A nice Task";
             task.duedate = "2012-03-26T12:21:24";
-
-            req.testPost(hClient, );
+            task.id = 4;
+            task.project = "testProject";
+            req.testPost(hClient, task);
         }
         
     }
