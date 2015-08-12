@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace Communication
 {
-
+    
     public class APIComm
     {
         const int POST = 0;
@@ -17,6 +17,7 @@ namespace Communication
         const int PUT = 2;
         const int DELETE = 3;
 
+        public event taskList updateTaskList;
         readonly HttpClient hClient;
         UniRequest req;
 
@@ -25,12 +26,21 @@ namespace Communication
 
         public APIComm()
         {
+            
             req = new UniRequest();
             hClient = new HttpClient();
+
             hClient.BaseAddress = new Uri(BASEADDRESS);
             hClient.DefaultRequestHeaders.Add("X-Uni-Secret", ACCESSTOKEN);
+
+            req.tasksEvent += req_tasksEvent;
             Logger.log("APIComm has been constructed");
             
+        }
+
+        void req_tasksEvent(List<Task> tl)
+        {
+            updateTaskList(tl);
         }
 
         public void Post(Task task)

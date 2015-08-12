@@ -11,8 +11,10 @@ using System.IO;
 namespace Communication
 {
     public delegate void stringList(List<string> sl);
+    public delegate void taskList(List<Task> tl);
     public class UniRequest
     {
+        public event taskList tasksEvent;
         public event stringList projectsEvent;
         public async void PostTask(HttpClient client, Task task){
             HttpRequestMessage req = new HttpRequestMessage(HttpMethod.Post, "task");
@@ -28,6 +30,10 @@ namespace Communication
                 DataContractJsonSerializer jsonSerializer = new DataContractJsonSerializer(typeof(Status));
                 status = (Status)jsonSerializer.ReadObject(new MemoryStream(Encoding.Unicode.GetBytes(responseString)));
                 Logger.log(responseString);
+                if (status.status)
+                {
+                    GetTasks(client);
+                }
             }
             catch (Exception e)
             {
@@ -69,6 +75,7 @@ namespace Communication
                 DataContractJsonSerializer jsonSerializer = new DataContractJsonSerializer(typeof(List<Task>));
                 tasks = (List<Task>)jsonSerializer.ReadObject(new MemoryStream(Encoding.Unicode.GetBytes(responseString)));
                 Logger.log(responseString);
+                tasksEvent(tasks);
             }
             catch (Exception e)
             {

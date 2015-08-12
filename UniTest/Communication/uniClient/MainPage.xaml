@@ -7,7 +7,141 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
+    <Grid Background="#FF008AC9">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid Margin="24,24,24,0"
+              Background="Gray">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock
+                Text="Project" 
+                FontSize="20"
+                Margin="24,12,12,0"/>
+            <TextBox x:Name="NewProject" 
+                     Grid.Row="1"
+                     Grid.ColumnSpan="3"
+                     Margin="24,12,12,0" TextWrapping="Wrap"/>
+            <TextBlock
+                Text="Description"
+                Grid.Row="2"
+                FontSize="20"
+                Margin="24,12,12,0"/>
+            <TextBox x:Name="NewDescription" Grid.Row="3"
+                     Margin="24,12,12,0"
+                     Grid.ColumnSpan="3" TextWrapping="Wrap"/>
+            <TextBlock Grid.Row="4"
+                       Text="Due Date"
+                       FontSize="20"
+                       Margin="24,12,12,0"/>
+            <Button x:Name="TaskBtn" Content="Add task"
+                    HorizontalAlignment="Center"
+                    Grid.Row="5"
+                    Grid.RowSpan="2"
+                    Grid.Column="2"
+                    Margin="12" Tapped="TaskBtn_Tapped"/>
+            <DatePicker x:Name="NewDate" 
+                        Grid.Row="6"
+                        Margin="24,12,12,12"/>
+            <TimePicker x:Name="NewTime" 
+                        Grid.Row="5"
+                        Margin="24,12,12,0" ClockIdentifier="24HourClock"/>
+            
+        </Grid>
+        <ListView x:Name="TaskList"
+                  Margin="24,0,24,24"
+                  Grid.Row="1" 
+                  Background="White"
+                  ItemsSource="{Binding}" ScrollViewer.VerticalScrollBarVisibility="Visible">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid 
+                        Background ="LightGray"
+                        Margin="24,24,0,0"
+                        >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock 
+                            Text="{Binding project}"
+                            HorizontalAlignment="Stretch"
+                            Foreground="Black"
+                            Margin="12,12,12,0" 
+                            FontSize="24"/>
+                        <TextBlock 
+                            Grid.Row="1"
+                            Text="{Binding description}"
+                            Foreground="Black"
+                            Margin="12,12,12,0" FontSize="20" TextWrapping="Wrap"/>
+                        <TextBlock
+                            Grid.Row="2"
+                            Text="{Binding duedate}"
+                            Foreground="Black"
+                            Margin="12"/>
+                        <Button Content="Finish" 
+                                Grid.Column="1" 
+                                Foreground="#FF008AC9"
+                                BorderBrush="#FF008AC9"
+                                HorizontalAlignment="Stretch"
+                                Margin="12,12,12,0"
+                                />
+                        <Button Content="Edit" 
+                                Foreground="#FF008AC9"
+                                BorderBrush="#FF008AC9"
+                                Grid.Column="1"
+                                Grid.Row="1"
+                                HorizontalAlignment="Stretch"
+                                Margin="12,12,12,0"/>
+                        <Button Content="Delete" 
+                                Foreground="#FF008AC9"
+                                BorderBrush="#FF008AC9"
+                                Grid.Column="1"
+                                Grid.Row="2"
+                                HorizontalAlignment="Stretch"
+                                Margin="12"/>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            
+        </ListView>
+                  
+        <!--<ListView x:Name="ProjectList" 
+                  Grid.Column="1"
+                  Grid.Row="1"
+                  Margin="24"
+                  Background="White"/> -->
+        
     </Grid>
+    
 </Page>
+    
