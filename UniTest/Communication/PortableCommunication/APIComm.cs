@@ -12,10 +12,6 @@ namespace Communication
     
     public class APIComm
     {
-        const int POST = 0;
-        const int GET = 1;
-        const int PUT = 2;
-        const int DELETE = 3;
 
         public event taskList updateTaskList;
         public event stringList updateProjectList;
