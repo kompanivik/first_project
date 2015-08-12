@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -26,6 +27,8 @@ namespace uniClient
     {
         ObservableCollection<Task> tList;
         APIComm api;
+        Task placeholder;
+
         public MainPage()
         {
             this.InitializeComponent();
@@ -38,16 +41,17 @@ namespace uniClient
             api.updateTaskList += api_updateTaskList;
             TaskList.ItemsSource = tList;
             api.GetAllTasks();
+            
         }
+
+
 
         void api_updateTaskList(List<Task> tl)
         {
+            Logger.log("Updating list");
+            tList = new ObservableCollection<Task>(tl);
+            TaskList.ItemsSource = tList.OrderBy(x => x.completed).OrderBy(x => x.project);
 
-            ObservableCollection<Task> list = new ObservableCollection<Task>(tl);
-            Logger.log(list[0].description);
-            tList = list;
-            TaskList.ItemsSource = tList;
-            TaskList.UpdateLayout();
         }
 
         private void TaskBtn_Tapped(object sender, TappedRoutedEventArgs e)
@@ -56,14 +60,85 @@ namespace uniClient
             task.completed = false;
 
             if(!NewDescription.Equals("") && !NewProject.Equals("")){
-                task.description = NewDescription.Text;
-                task.project = NewProject.Text;
-                string dateTime = NewDate.Date.ToString("yyyy-MM-dd");
-                string time = NewTime.Time.ToString();
-                task.duedate = dateTime + "T" + time;
-                Logger.log(dateTime + "T" + time);
+                task = prepareTask(task);
                 api.Post(task);
             }
         }
+
+        private Task prepareTask(Task task)
+        {
+            task.description = NewDescription.Text;
+            task.project = NewProject.Text;
+            string dateTime = NewDate.Date.ToString("yyyy-MM-dd");
+            string time = NewTime.Time.ToString();
+            task.duedate = dateTime + "T" + time;
+            Logger.log(dateTime + "T" + time);
+            return task;
+        }
+
+        private void Button_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            Button btn = (Button)sender;
+            int id = (int)btn.Tag;
+            api.Delete(id);
+        }
+        /// <summary>
+        /// this function prepares the selected task for editing
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void EditBtn_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            Button btn = (Button)sender;
+            int id = (int)btn.Tag;
+
+            placeholder = tList.Where(x => x.id == id).First();
+
+            FinalEdit.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            TaskBtn.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            
+            NewDate.Date = placeholder.dateTime.Date;
+            NewTime.Time = placeholder.dateTime.TimeOfDay;
+
+            NewProject.Text = placeholder.project;
+            NewDescription.Text = placeholder.description;
+
+        }
+        /// <summary>
+        /// here we send the edited task to the server
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void FinalEdit_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            placeholder = prepareTask(placeholder);
+            api.Put(placeholder);
+
+            NewProject.Text = "";
+            NewDescription.Text = "";
+
+            FinalEdit.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            TaskBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
+
+        }
+
+        private void FinishBtn_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            Button btn = (Button)sender;
+            Task task = tList.Where(x => x.id == (int)btn.Tag).First();
+            task.completed = true;
+            api.Put(task);
+        }
+
+        private void CancelBtn_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            NewDescription.Text = "";
+            NewProject.Text = "";
+            TaskBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            FinalEdit.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+        }
+
+
+        
     }
 }

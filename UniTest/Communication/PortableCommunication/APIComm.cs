@@ -18,6 +18,7 @@ namespace Communication
         const int DELETE = 3;
 
         public event taskList updateTaskList;
+        public event stringList updateProjectList;
         readonly HttpClient hClient;
         UniRequest req;
 
@@ -34,8 +35,14 @@ namespace Communication
             hClient.DefaultRequestHeaders.Add("X-Uni-Secret", ACCESSTOKEN);
 
             req.tasksEvent += req_tasksEvent;
+            req.projectsEvent += req_projectsEvent;
             Logger.log("APIComm has been constructed");
             
+        }
+
+        void req_projectsEvent(List<string> sl)
+        {
+            updateProjectList(sl);
         }
 
         void req_tasksEvent(List<Task> tl)
@@ -64,6 +71,16 @@ namespace Communication
         public void GetAllProjects()
         {
             req.getProjects(hClient);
+        }
+
+        public void Put(Task task)
+        {
+            req.PutTask(hClient, task);
+        }
+
+        public void Delete(int taskId)
+        {
+            req.DeleteTask(hClient, taskId);
         }
         
     }

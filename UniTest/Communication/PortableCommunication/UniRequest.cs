@@ -18,11 +18,21 @@ namespace Communication
         public event stringList projectsEvent;
         public async void PostTask(HttpClient client, Task task){
             HttpRequestMessage req = new HttpRequestMessage(HttpMethod.Post, "task");
+            putOrPostTask(client, req, task);
+        }
+
+        public async void PutTask(HttpClient client, Task task)
+        {
+            HttpRequestMessage req = new HttpRequestMessage(HttpMethod.Put, "task");
+            putOrPostTask(client, req, task);
+        }
+
+        private async void putOrPostTask(HttpClient client, HttpRequestMessage req, Task task)
+        {
             var jsonObject = JsonConvert.SerializeObject(task);
             Logger.log(jsonObject);
-            req.Content = new StringContent(jsonObject, Encoding.UTF8,"application/json");
+            req.Content = new StringContent(jsonObject, Encoding.UTF8, "application/json");
             Status status;
-            //Logger.log(req.Content.ToString());
             try
             {
                 HttpResponseMessage response = await client.SendAsync(req);
@@ -39,11 +49,6 @@ namespace Communication
             {
                 Logger.log("Problem with posting: " + e.Message);
             }
-        }
-
-        public async void PutTask(HttpClient client, Task task)
-        {
-
         }
 
         public async void GetTask(HttpClient client, int taskId)
@@ -103,7 +108,23 @@ namespace Communication
 
         public async void DeleteTask(HttpClient client, int taskId)
         {
-
+            HttpRequestMessage req = new HttpRequestMessage(HttpMethod.Delete, "task/" + taskId);
+            Status status;
+            try
+            {
+                HttpResponseMessage response = await client.SendAsync(req);
+                string responseString = await response.Content.ReadAsStringAsync();
+                DataContractJsonSerializer jsonSerializer = new DataContractJsonSerializer(typeof(Status));
+                status = (Status)jsonSerializer.ReadObject(new MemoryStream(Encoding.Unicode.GetBytes(responseString)));
+                Logger.log(responseString);
+                if(status.status){
+                    GetTasks(client);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.log("Problem with getting tasks: " + e.Message);
+            }
         }
 
         public async void getProjects(HttpClient client)

@@ -39,7 +39,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Status.cs" />
     <Compile Include="Task.cs" />
-    <Compile Include="TaskList.cs" />
+    <Compile Include="Project.cs" />
     <Compile Include="UniRequest.cs" />
     <Compile Include="User.cs" />
   </ItemGroup>
